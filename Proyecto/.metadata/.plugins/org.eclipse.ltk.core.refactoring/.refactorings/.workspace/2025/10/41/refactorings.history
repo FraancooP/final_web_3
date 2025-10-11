@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;iw3&apos;" deleteContents="false" description="Delete resource &apos;iw3&apos;" element1="/iw3" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1760214269244"/>
-</session>
