@@ -1,0 +1,13 @@
+docker exec -it mysqliw3_tpfinal ls
+docker exec -it mysqliw3_tpfinal bash
+
+//Ejecutar esto luego de ejecutar el script-------------------------------------
+sudo mysql -uroot -pfinalweb3
+DROP USER IF EXISTS 'iw3'@'localhost';
+DROP USER IF EXISTS 'iw3'@'127.0.0.1';
+DROP USER IF EXISTS 'iw3'@'::1';
+DROP USER IF EXISTS 'iw3'@'%';
+
+CREATE USER iw3@'%' IDENTIFIED BY 'finalweb3';
+GRANT ALL PRIVILEGES ON *.* TO iw3@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
