@@ -12,4 +12,4 @@ git pull https://github.com/FraancooP/final_web_3
 
 Franco:Listo
 Fabri: Listo
-Joa:
+Joa: Listo
