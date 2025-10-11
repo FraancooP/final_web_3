@@ -7,5 +7,5 @@ git remote add origin https://github.com/FraancooP/final_web_3
 git push -u origin main
 
 Franco:Listo
-Fabri:
+Fabri: Listo
 Joa:
