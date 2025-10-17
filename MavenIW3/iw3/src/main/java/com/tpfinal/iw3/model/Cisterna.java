@@ -24,10 +24,5 @@ public class Cisterna {
 	private String nombre;
 
 	private Integer capacidad;
-	
-	
-	
-	
-	
 
 }

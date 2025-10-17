@@ -1,6 +1,5 @@
 package com.tpfinal.iw3.model;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,9 +57,9 @@ public class Camion {
 	private String codigoExterno;
 
 	//No nos quedo claro si total debe ser persistido.
-	@Transient
-	public Integer getTotalCapacidad() {
-		return cisternas.stream().mapToInt(Cisterna::getCapacidad).sum();
-	}
+	//@Transient
+	//public Integer getTotalCapacidad() {
+	//	return cisternas.stream().mapToInt(Cisterna::getCapacidad).sum();
+	//}
 	
 }

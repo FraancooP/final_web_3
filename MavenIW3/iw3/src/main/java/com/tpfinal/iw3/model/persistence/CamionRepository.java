@@ -16,4 +16,6 @@ public interface CamionRepository extends JpaRepository<Camion, Long> {
 
     //Buscamos camion por su codigo externo
     Optional<Camion> findByCodigoExterno(String codigoExterno);
+
+    Optional<Camion> findByPatenteAndIdNot(String patente, Long id);
 }

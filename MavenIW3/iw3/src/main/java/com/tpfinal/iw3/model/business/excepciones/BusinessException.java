@@ -1,14 +1,18 @@
-package com.tpfinal.iw3.model.business;
+package com.tpfinal.iw3.model.business.excepciones;
+
+import java.io.Serial;
 
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
 //Excepciones base para todos los errores de negocio de nuestro sistema
 
 
 
-@NoArgsConstructor
 public class BusinessException extends Exception{
+
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	@Builder
 	public BusinessException(String message, Throwable ex) {

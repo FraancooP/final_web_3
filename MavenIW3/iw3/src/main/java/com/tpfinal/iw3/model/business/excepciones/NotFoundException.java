@@ -1,4 +1,6 @@
-package com.tpfinal.iw3.model.business;
+package com.tpfinal.iw3.model.business.excepciones;
+
+import java.io.Serial;
 
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class NotFoundException extends Exception{
+
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	@Builder
 	public NotFoundException(String message, Throwable ex) {
