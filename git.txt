@@ -21,7 +21,8 @@ si se esta usando visual, procurar estar en la carpeta:
 y ejecutar los siguientes comandos:
 Para buildear:
 mvn clean package
-
+USAR MEJOR ESTE
+mvn clean compile
 Para ejecutar el servidor:
 mvn spring-boot:run
 o
