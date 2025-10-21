@@ -14,6 +14,8 @@ public interface ChoferRepository extends JpaRepository<Chofer, Long> {
     //Buscamos chofer por su documento
     Optional<Chofer> findByDocumento(String documento);
 
+    //Buscamos chofer por su documento excluyendo un id
+    Optional<Chofer> findByDocumentoAndIdNot(String documento, Long Id);
     //Buscamos chofer por su codigo externo
     Optional<Chofer> findByCodigoExterno(String codigoExterno);
 }
