@@ -7,8 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ar.edu.iua.iw3.model.business.BusinessException;
-import ar.edu.iua.iw3.model.business.NotFoundException;
+import com.tpfinal.iw3.auth.model.User;
+import com.tpfinal.iw3.auth.model.business.exception.BadPasswordException;
+import com.tpfinal.iw3.auth.model.business.interfaces.IUserBusiness;
+import com.tpfinal.iw3.auth.model.persistence.UserRepository;
+import com.tpfinal.iw3.model.business.excepciones.BusinessException;
+import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service

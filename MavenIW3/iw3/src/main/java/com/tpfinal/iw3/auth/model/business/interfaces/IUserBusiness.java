@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ar.edu.iua.iw3.model.business.BusinessException;
-import ar.edu.iua.iw3.model.business.NotFoundException;
+import com.tpfinal.iw3.auth.model.User;
+import com.tpfinal.iw3.auth.model.business.exception.BadPasswordException;
+import com.tpfinal.iw3.model.business.excepciones.BusinessException;
+import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
 
 public interface IUserBusiness {
 	public User load(String usernameOrEmail) throws NotFoundException, BusinessException;
