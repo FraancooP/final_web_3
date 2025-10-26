@@ -12,8 +12,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     //Buscamos producto por su codigo externo
     Optional<Producto> findByCodigoExterno(String codigoExterno);
     //Buscamos producto por su nombre
-    Optional<Producto> findByProduct(String product);
+    Optional<Producto> findByNombre(String nombre);
     //Buscamos producto por su nombre excluyendo un id
-    Optional<Producto> findByProductAndIdNot(String product, long id);
-	
+    Optional<Producto> findByNombreAndIdNot(String nombre, long id);
+
 }
