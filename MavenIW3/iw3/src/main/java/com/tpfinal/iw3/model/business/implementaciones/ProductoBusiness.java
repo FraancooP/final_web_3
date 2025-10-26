@@ -69,7 +69,7 @@ public class ProductoBusiness implements IProductoBusiness {
 
     @Override
     public Producto update(Producto producto) throws NotFoundException, DuplicateException, BusinessException {
-       load(producto.getId());
+        load(producto.getId());
         //Producto productoExistente = load(producto.getId());
 
         Optional<Producto> productoEncontrado;

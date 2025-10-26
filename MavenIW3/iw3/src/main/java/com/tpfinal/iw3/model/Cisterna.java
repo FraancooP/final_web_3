@@ -1,25 +1,28 @@
 package com.tpfinal.iw3.model;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
-
-//Usamos Embeddable para indicar que esta clase sera embebida en otra entidad
-//En este caso sera embebida en la clase Camion
-//No necesita id ya que no es una entidad independiente
-//Los atributos de esta clase seran columnas en la tabla camion_cisternas
-//que se crea automaticamente al usar CollectionTable en la clase Camion
-@Embeddable
+@Entity
+@Table(name="cisternas")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Cisterna {
+
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 	
 	private String nombre;
 
