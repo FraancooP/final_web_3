@@ -43,6 +43,9 @@ public class Cisterna {
 
 	@Column(nullable = false)
 	private Integer capacidad;
+
+	@Column(nullable = false)
+	private String codigoExterno;
 	
 
 }

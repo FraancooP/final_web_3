@@ -1,16 +1,14 @@
 package com.tpfinal.iw3.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,14 +41,8 @@ public class Camion {
 	
 
 
-	//Usamos collection table para mapear la lista de cisternas
-	//ya que es una clase embebida y no una entidad
-	//La tabla se llamara camion_cisternas y tendra una columna camion_id
-	//que sera la clave foranea a la tabla camiones
-	//y las columnas de la clase cisterna
-	@ElementCollection
-	@CollectionTable(name="camion_cisternas", joinColumns=@JoinColumn(name="camion_id"))
-	private List<Cisterna> cisternas = new ArrayList<>();
+	@OneToMany(mappedBy="camion")
+	private Set<Cisterna> cisternas = new HashSet<>();
 	
 	//@NotBlank
 	@Column(name = "codigo_externo", length = 50, unique=true, nullable = false)
