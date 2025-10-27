@@ -15,11 +15,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.tpfinal.iw3.auth.model.IUserBusiness;
 import com.tpfinal.iw3.auth.model.User;
+import com.tpfinal.iw3.auth.model.business.interfaces.IUserBusiness;
 import com.tpfinal.iw3.model.business.excepciones.BusinessException;
 import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 public class CustomAuthenticationManager implements AuthenticationManager {
