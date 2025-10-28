@@ -14,7 +14,7 @@ import com.tpfinal.iw3.integration.cli1.model.CamionCli1;
 @Repository
 public interface CamionCli1Repository extends JpaRepository<CamionCli1, Long> {
 
-    Optional<CamionCli1> findOneByPatenteCli1(String patenteCli1);
+    Optional<CamionCli1> findOneByIdCli1(String idCli1);
 
     @Modifying
     @Query(value = "INSERT INTO cli1_camiones (id_camion, id_cli1, cod_cli1_temp) VALUES (:idCamion, :idCli1, false)", nativeQuery = true)

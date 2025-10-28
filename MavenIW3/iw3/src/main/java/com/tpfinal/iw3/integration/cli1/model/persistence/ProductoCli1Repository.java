@@ -12,7 +12,7 @@ import com.tpfinal.iw3.integration.cli1.model.ProductoCli1;
 
 public interface ProductoCli1Repository extends JpaRepository<ProductoCli1, Long> {
 
-    Optional<ProductoCli1> findOneByCodigoCli1(String codigoCli1);
+    Optional<ProductoCli1> findOneByIdCli1(String codigoCli1);
 
     @Modifying
     @Query(value = "INSERT INTO cli1_productos (id_producto, id_cli1, cod_cli1_temp) VALUES (:idProducto, :idCli1, false)", nativeQuery = true)

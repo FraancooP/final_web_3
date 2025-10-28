@@ -11,11 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.tpfinal.iw3.integration.cli1.model.OrdenCli1;
 import com.tpfinal.iw3.integration.cli1.model.OrdenCli1JsonDeserializer;
-import com.tpfinal.iw3.integration.cli1.model.business.interfaces.*;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.ICamionCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IChoferCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IClienteCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IOrdenCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IProductoCli1Business;
 import com.tpfinal.iw3.integration.cli1.model.persistence.OrdenCli1Repository;
 import com.tpfinal.iw3.model.business.excepciones.BusinessException;
 import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
-import com.tpfinal.iw3.model.business.interfaces.IOrdenBusiness;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,9 +28,6 @@ public class OrdenCli1Business implements IOrdenCli1Business {
 
     @Autowired
     private OrdenCli1Repository ordenCli1DAO;
-
-    @Autowired
-    private IOrdenBusiness ordenBaseBusiness;
 
     @Autowired
     private IClienteCli1Business clienteCli1Business;

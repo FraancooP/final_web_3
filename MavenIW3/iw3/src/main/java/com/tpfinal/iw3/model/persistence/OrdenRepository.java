@@ -17,5 +17,5 @@ public interface OrdenRepository extends JpaRepository<Orden, Long> {
 
     Optional<Orden> findByEstado(String estado);
 
-    Optional<Orden> findByPasswordActivacion(String password);
+    Optional<Orden> findByContraActivacion(Integer contraActivacion);
 }
