@@ -10,4 +10,6 @@ public interface IProductoCli1Business {
     ProductoCli1 load(String idCli1) throws NotFoundException, BusinessException;
 
     Producto load(ProductoCli1 productoCli1) throws BusinessException, NotFoundException;
+    
+    Producto loadOrCreate(ProductoCli1 productoCli1) throws BusinessException, NotFoundException;
 }

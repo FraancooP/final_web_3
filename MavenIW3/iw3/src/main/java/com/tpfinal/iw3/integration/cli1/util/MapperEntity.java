@@ -1,15 +1,30 @@
 package com.tpfinal.iw3.integration.cli1.util;
 
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tpfinal.iw3.integration.cli1.model.*;
-import com.tpfinal.iw3.integration.cli1.model.persistence.*;
-import com.tpfinal.iw3.model.*;
+
+import com.tpfinal.iw3.integration.cli1.model.CamionCli1;
+import com.tpfinal.iw3.integration.cli1.model.ChoferCli1;
+import com.tpfinal.iw3.integration.cli1.model.CisternaCli1;
+import com.tpfinal.iw3.integration.cli1.model.ClienteCli1;
+import com.tpfinal.iw3.integration.cli1.model.ProductoCli1;
+import com.tpfinal.iw3.integration.cli1.model.persistence.CamionCli1Repository;
+import com.tpfinal.iw3.integration.cli1.model.persistence.ChoferCli1Repository;
+import com.tpfinal.iw3.integration.cli1.model.persistence.CisternaCli1Repository;
+import com.tpfinal.iw3.integration.cli1.model.persistence.ClienteCli1Repository;
+import com.tpfinal.iw3.integration.cli1.model.persistence.ProductoCli1Repository;
+import com.tpfinal.iw3.model.Camion;
+import com.tpfinal.iw3.model.Chofer;
+import com.tpfinal.iw3.model.Cisterna;
+import com.tpfinal.iw3.model.Cliente;
+import com.tpfinal.iw3.model.Producto;
 import com.tpfinal.iw3.model.business.excepciones.BusinessException;
 import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
-import com.tpfinal.iw3.model.business.interfaces.*;
+import com.tpfinal.iw3.model.business.interfaces.IProductoBusiness;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -39,18 +54,18 @@ public class MapperEntity {
     //Mapeamos ProductoCli1 con Producto Base
 
     @Transactional
-    public Producto map(ProductoCli1 productoCli1) throws BusinessException, NotFoundException{
+    public Producto map(ProductoCli1 productoCli1) throws BusinessException, NotFoundException {
 
         //Verificamos si ya esta mapeado
         Optional<ProductoCli1> productoExistente = productoCli1DAO.findOneByIdCli1(productoCli1.getIdCli1());
         if (productoExistente.isPresent()) {
-            return productoExistente.get();
+            // Si ya existe el mapeo, retornar el producto base asociado
+            ProductoCli1 productoCli1Existente = productoExistente.get();
+            return productoBaseBusiness.load(productoCli1Existente.getId());
         }
 
-        //Busca producto base por nombre
+        // Buscar producto base por nombre - SI NO EXISTE, FALLA (patrón ProyectoAyuda)
         Producto productoBase = productoBaseBusiness.load(productoCli1.getNombre());
-
-
 
         try {
             productoCli1.setId(productoBase.getId());

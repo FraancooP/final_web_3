@@ -84,23 +84,23 @@ public class Orden {
 
 
     //Preset
-    @Column(name = "preset_kg", nullable = false)
+    @Column(name = "preset_kg", nullable = true)
     private Integer presetKg;
 
     //Fechas de los distintos eventos de la orden
-    @Column(name = "fecha_recepcion_inicial", nullable = false)
+    @Column(name = "fecha_recepcion_inicial", nullable = true)
     private LocalDateTime fechaRecepcionInicial;
 
-    @Column(name = "fecha_pesaje_inicial", nullable = false)
+    @Column(name = "fecha_pesaje_inicial", nullable = true)  // nullable - se setea en Punto 2
     private LocalDateTime fechaPesajeInicial;
 
-    @Column(name = "fecha_inicio_carga", nullable = false)
+    @Column(name = "fecha_inicio_carga", nullable = true)  // nullable - se setea en Punto 3
     private LocalDateTime fechaInicioCarga;
 
-    @Column(name = "fecha_fin_carga", nullable = false)
+    @Column(name = "fecha_fin_carga", nullable = true)  // nullable - se setea en Punto 4
     private LocalDateTime fechaFinCarga;
 
-    @Column(name = "fecha_pesaje_final", nullable = false)
+    @Column(name = "fecha_pesaje_final", nullable = true)  // nullable - se setea en Punto 5
     private LocalDateTime fechaPesajeFinal;
 
 
@@ -111,24 +111,24 @@ public class Orden {
 
 
     // Últimos valores de carga (estado en tiempo real)
-    @Column(name = "ultima_masa_acomulada", nullable = false)
+    @Column(name = "ultima_masa_acomulada", nullable = true)
     private Double ultimaMasaAcomulada;
 
-    @Column(name = "ultima_densidad", nullable = false)
+    @Column(name = "ultima_densidad", nullable = true)
     private Double ultimaDensidad;
 
-    @Column(name = "ultima_temperatura", nullable = false)
+    @Column(name = "ultima_temperatura", nullable = true)
     private Double ultimaTemperatura;
 
-    @Column(name = "ultimo_caudal", nullable = false)
+    @Column(name = "ultimo_caudal", nullable = true)
     private Double ultimoCaudal;
-    
-    @Column(name = "ultima_actualizacion", nullable = false)
+
+    @Column(name = "ultima_actualizacion", nullable = true)
     private LocalDateTime ultimaActualizacion;
 
 
     //Codigo externo y contraseña de activacion
-    @Column(name = "codigo_externo", length = 50, unique=true, nullable = false)
+    @Column(name = "codigo_externo", length = 50, unique=true, nullable = true)
     private String codigoExterno;
 
     @Column(name = "contra_activacion")

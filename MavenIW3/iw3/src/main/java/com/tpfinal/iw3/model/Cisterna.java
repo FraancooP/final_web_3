@@ -34,11 +34,11 @@ public class Cisterna {
 	private long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="camion_id", nullable=false)
+	@JoinColumn(name="camion_id", nullable=true)
 	@JsonIgnoreProperties("cisterna")
 	private Camion camion;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String nombre;
 
 	@Column(nullable = false)

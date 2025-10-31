@@ -3,6 +3,7 @@ package com.tpfinal.iw3.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,7 +45,7 @@ public class Camion {
 	
 
 
-	@OneToMany(mappedBy="camion")
+	@OneToMany(mappedBy="camion", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Cisterna> cisternas = new HashSet<>();
 	
 	//@NotBlank

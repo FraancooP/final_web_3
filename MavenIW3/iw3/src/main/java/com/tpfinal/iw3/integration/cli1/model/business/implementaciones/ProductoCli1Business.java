@@ -46,4 +46,10 @@ public class ProductoCli1Business implements IProductoCli1Business {
     public Producto load(ProductoCli1 productoCli1) throws BusinessException, NotFoundException {
         return mapperEntity.map(productoCli1);
     }
+    
+    @Override
+    @Transactional
+    public Producto loadOrCreate(ProductoCli1 productoCli1) throws BusinessException, NotFoundException {
+        return mapperEntity.map(productoCli1);
+    }
 }

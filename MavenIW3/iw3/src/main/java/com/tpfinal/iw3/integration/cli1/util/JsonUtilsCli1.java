@@ -1,13 +1,25 @@
 package com.tpfinal.iw3.integration.cli1.util;
 
+import static com.tpfinal.iw3.integration.cli1.util.JsonAttributeConstants.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.tpfinal.iw3.integration.cli1.model.*;
-import com.tpfinal.iw3.integration.cli1.model.business.interfaces.*;
-import com.tpfinal.iw3.model.*;
+import com.tpfinal.iw3.integration.cli1.model.CamionCli1;
+import com.tpfinal.iw3.integration.cli1.model.ChoferCli1;
+import com.tpfinal.iw3.integration.cli1.model.CisternaCli1;
+import com.tpfinal.iw3.integration.cli1.model.ClienteCli1;
+import com.tpfinal.iw3.integration.cli1.model.ProductoCli1;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.ICamionCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IChoferCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.ICisternaCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IClienteCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IProductoCli1Business;
+import com.tpfinal.iw3.model.Camion;
+import com.tpfinal.iw3.model.Chofer;
+import com.tpfinal.iw3.model.Cisterna;
+import com.tpfinal.iw3.model.Cliente;
+import com.tpfinal.iw3.model.Producto;
 import com.tpfinal.iw3.model.business.excepciones.BusinessException;
 import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
-
-import static com.tpfinal.iw3.integration.cli1.util.JsonAttributeConstants.*;
 
 public class JsonUtilsCli1 {
 
@@ -151,7 +163,29 @@ public class JsonUtilsCli1 {
                 productoCli1.setDescripcion(descripcion.isEmpty() ? "Sin descripción" : descripcion);
                 productoCli1.setCodigoExterno("CLI1-" + idCli1);
 
-                return productoCli1Business.load(productoCli1);
+                return productoCli1Business.loadOrCreate(productoCli1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene o crea una Cisterna desde el nodo JSON
+     */
+    public static Cisterna getCisterna(JsonNode node, ICisternaCli1Business cisternaCli1Business) 
+            throws BusinessException, NotFoundException {
+        JsonNode cisternaNode = getJsonNode(node, CISTERNA_NODE_ATTRIBUTES);
+        if (cisternaNode != null) {
+            String idCli1 = getString(cisternaNode, CISTERNA_IDCLI1_ATTRIBUTES, "");
+            Double capacidad = getDouble(cisternaNode, CISTERNA_CAPACIDAD_ATTRIBUTES, 0.0);
+
+            if (!idCli1.isEmpty() && capacidad > 0) {
+                CisternaCli1 cisternaCli1 = new CisternaCli1();
+                cisternaCli1.setIdCli1(idCli1);
+                cisternaCli1.setCapacidad(capacidad.intValue()); // Convertir Double a Integer
+                cisternaCli1.setCodigoExterno("CLI1-" + idCli1);
+
+                return cisternaCli1Business.loadOrCreate(cisternaCli1);
             }
         }
         return null;

@@ -15,7 +15,7 @@ public interface ProductoCli1Repository extends JpaRepository<ProductoCli1, Long
     Optional<ProductoCli1> findOneByIdCli1(String codigoCli1);
 
     @Modifying
-    @Query(value = "INSERT INTO cli1_productos (id_producto, id_cli1, cod_cli1_temp) VALUES (:idProducto, :idCli1, false)", nativeQuery = true)
+    @Query(value = "INSERT INTO cli1_products (id_product, id_cli1, cod_cli1_temp) VALUES (:idProducto, :idCli1, false)", nativeQuery = true)
     void insertProductoCli1(@Param("idProducto") Long idProducto, @Param("idCli1") String idCli1);
     
 }

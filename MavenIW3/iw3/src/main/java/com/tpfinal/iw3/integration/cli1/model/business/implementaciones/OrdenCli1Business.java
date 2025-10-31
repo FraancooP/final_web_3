@@ -13,6 +13,7 @@ import com.tpfinal.iw3.integration.cli1.model.OrdenCli1;
 import com.tpfinal.iw3.integration.cli1.model.OrdenCli1JsonDeserializer;
 import com.tpfinal.iw3.integration.cli1.model.business.interfaces.ICamionCli1Business;
 import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IChoferCli1Business;
+import com.tpfinal.iw3.integration.cli1.model.business.interfaces.ICisternaCli1Business;
 import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IClienteCli1Business;
 import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IOrdenCli1Business;
 import com.tpfinal.iw3.integration.cli1.model.business.interfaces.IProductoCli1Business;
@@ -37,6 +38,9 @@ public class OrdenCli1Business implements IOrdenCli1Business {
 
     @Autowired
     private ICamionCli1Business camionCli1Business;
+
+    @Autowired
+    private ICisternaCli1Business cisternaCli1Business;
 
     @Autowired
     private IProductoCli1Business productoCli1Business;
@@ -95,6 +99,7 @@ public class OrdenCli1Business implements IOrdenCli1Business {
                 clienteCli1Business,
                 choferCli1Business,
                 camionCli1Business,
+                cisternaCli1Business,
                 productoCli1Business
         ));
         mapper.registerModule(module);

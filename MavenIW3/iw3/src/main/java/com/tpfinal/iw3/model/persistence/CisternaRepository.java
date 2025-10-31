@@ -10,5 +10,7 @@ public interface CisternaRepository extends  JpaRepository<Cisterna, Long>{
     Optional<Cisterna> findByCodigoExterno(String codigoExterno);
 
     Optional<Cisterna> findByCodigoExternoAndIdNot(String codigoExterno, Long id);
+    
+    Optional<Cisterna> findByCapacidad(Integer capacidad);
 
 }
