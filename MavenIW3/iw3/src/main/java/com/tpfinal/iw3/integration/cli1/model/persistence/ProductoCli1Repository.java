@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.tpfinal.iw3.integration.cli1.model.ProductoCli1;
 
+@Repository
 public interface ProductoCli1Repository extends JpaRepository<ProductoCli1, Long> {
 
     Optional<ProductoCli1> findOneByIdCli1(String codigoCli1);
