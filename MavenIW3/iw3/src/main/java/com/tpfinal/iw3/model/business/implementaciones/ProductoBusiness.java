@@ -46,12 +46,16 @@ public class ProductoBusiness implements IProductoBusiness {
             //throw BusinessException.builder().ex(e).build();
         }
 
-        try {
-            load(producto.getId());
-            throw DuplicateException.builder().message("El producto con el id = "+producto.getId()+" ya existe.").build();
-        } catch (NotFoundException e) {
-            //log.error(e.getMessage(), e);
-            //throw BusinessException.builder().ex(e).build();
+        // Si el producto viene con ID (actualización o inserción manual), validar duplicado por ID.
+        // Evitar NullPointerException al intentar desboxear un Long nulo cuando es alta nueva.
+        if (producto.getId() != null) {
+            try {
+                load(producto.getId());
+                throw DuplicateException.builder().message("El producto con el id = "+producto.getId()+" ya existe.").build();
+            } catch (NotFoundException e) {
+                //log.error(e.getMessage(), e);
+                //throw BusinessException.builder().ex(e).build();
+            }
         }
 
         try {

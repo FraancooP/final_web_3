@@ -1,17 +1,21 @@
 package com.tpfinal.iw3.integration.cli1.model;
 
 import com.tpfinal.iw3.model.Cliente;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 
 @Entity
-@Table(name = "cli1_clients")
-@PrimaryKeyJoinColumn(name = "id_client")
+@Table(name = "cli1_clientes")
+@PrimaryKeyJoinColumn(name = "id_cliente")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

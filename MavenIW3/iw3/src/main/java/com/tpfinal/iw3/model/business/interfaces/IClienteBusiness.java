@@ -17,6 +17,8 @@ public interface IClienteBusiness {
 
     public Cliente load(String codigoExterno) throws BusinessException, NotFoundException;
 
+    public Cliente loadByRazonSocial(String razonSocial) throws BusinessException, NotFoundException;
+
     public Cliente add(Cliente cliente) throws BusinessException, DuplicateException;
 
     public Cliente update(Cliente cliente) throws BusinessException, DuplicateException, NotFoundException;

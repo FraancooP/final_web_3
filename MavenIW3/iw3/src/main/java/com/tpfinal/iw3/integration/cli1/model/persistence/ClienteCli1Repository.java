@@ -17,6 +17,6 @@ public interface ClienteCli1Repository extends JpaRepository<ClienteCli1, Long> 
     Optional<ClienteCli1> findOneByIdCli1(String idCli1);
 
     @Modifying
-    @Query(value = "INSERT INTO cli1_clientes (id_cliente, id_cli1, cod_cli1_temp) VALUES (:idCliente, :idCli1, false)", nativeQuery = true)
+    @Query(value = "INSERT INTO cli1_clients (id_client, id_cli1, cod_cli1_temp) VALUES (:idCliente, :idCli1, false)", nativeQuery = true)
     void insertClienteCli1(@Param("idCliente") Long idCliente, @Param("idCli1") String idCli1);
 }

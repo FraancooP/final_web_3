@@ -71,6 +71,23 @@ public class ClienteBusiness implements IClienteBusiness {
     }
 
     @Override
+    public Cliente loadByRazonSocial(String razonSocial) throws BusinessException, NotFoundException {
+        Optional<Cliente> clienteEncontrado;
+        try {
+            clienteEncontrado = clienteDAO.findOneByRazonSocialIgnoreCase(razonSocial);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw BusinessException.builder().ex(e).build();
+        }
+
+        if (clienteEncontrado.isEmpty()) {
+            throw NotFoundException.builder().message("No se encontro el cliente con razon social = " + razonSocial).build();
+        }
+
+        return clienteEncontrado.get();
+    }
+
+    @Override
     public Cliente add(Cliente cliente) throws BusinessException, DuplicateException {
 
         Optional<Cliente> clienteExistente;

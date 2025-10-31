@@ -74,7 +74,10 @@ public class OrdenCli1JsonDeserializer extends StdDeserializer<OrdenCli1> {
             Cisterna cisterna = JsonUtilsCli1.getCisterna(node, cisternaCli1Business);
             if (cisterna != null && camion != null) {
                 cisterna.setCamion(camion);
-                // La cisterna se guardará automáticamente por la relación con el camión
+                // Asegurar lado inverso para que el cascade desde Camion incluya la Cisterna
+                if (camion.getCisternas() != null && !camion.getCisternas().contains(cisterna)) {
+                    camion.getCisternas().add(cisterna);
+                }
             }
 
             // 3. Validar que todas las entidades existan

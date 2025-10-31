@@ -27,7 +27,7 @@ public class Cliente {
     private Long id;
     @Column(name = "razon_social", length = 50, nullable = false)
     private String razonSocial;
-    @Column(length = 10, unique=true, nullable = false)
+    @Column(length = 100, unique=true, nullable = false)
     private String contacto;
     @Column(name = "codigo_externo", length = 50, unique=true, nullable = false)
     private String codigoExterno;

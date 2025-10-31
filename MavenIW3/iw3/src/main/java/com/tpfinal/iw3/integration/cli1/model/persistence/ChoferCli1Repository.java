@@ -16,7 +16,7 @@ public interface ChoferCli1Repository extends JpaRepository<ChoferCli1, Long> {
     Optional<ChoferCli1> findOneByIdCli1(String dniCli1);
 
     @Modifying
-    @Query(value = "INSERT INTO cli1_choferes (id_chofer, id_cli1, cod_cli1_temp) VALUES (:idChofer, :idCli1, false)", nativeQuery = true)
+    @Query(value = "INSERT INTO cli1_drivers (id_driver, id_cli1, cod_cli1_temp) VALUES (:idChofer, :idCli1, false)", nativeQuery = true)
     void insertChoferCli1(@Param("idChofer") Long idChofer, @Param("idCli1") String idCli1);
     
 }

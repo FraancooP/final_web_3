@@ -60,8 +60,8 @@ public class ClienteCli1Business implements IClienteCli1Business {
     @Transactional
     public ClienteCli1 add(ClienteCli1 cliente) throws BusinessException {
         try {
-            // Buscar si ya existe el cliente base por razón social
-            Cliente clienteBase = clienteBaseBusiness.load(cliente.getRazonSocial());
+            // Buscar si ya existe el cliente base por razón social (no por código externo)
+            Cliente clienteBase = clienteBaseBusiness.loadByRazonSocial(cliente.getRazonSocial());
             // Si existe, solo crear el mapeo
             mapperEntity.map(cliente, clienteBase);
             throw new BusinessException("El cliente ya existe con id=" + cliente.getId());
@@ -89,7 +89,7 @@ public class ClienteCli1Business implements IClienteCli1Business {
 
         // 1. Intentar buscar cliente base por razón social
         try {
-            clienteBase = Optional.ofNullable(clienteBaseBusiness.load(cliente.getRazonSocial()));
+            clienteBase = Optional.ofNullable(clienteBaseBusiness.loadByRazonSocial(cliente.getRazonSocial()));
         } catch (NotFoundException ignored) {
         }
 
@@ -100,7 +100,7 @@ public class ClienteCli1Business implements IClienteCli1Business {
             } catch (BusinessException e) {
                 // Si falla, intentar cargarlo de nuevo
                 try {
-                    return clienteBaseBusiness.load(cliente.getRazonSocial());
+                    return clienteBaseBusiness.loadByRazonSocial(cliente.getRazonSocial());
                 } catch (NotFoundException ex) {
                     throw new BusinessException("Error al crear/cargar cliente: " + e.getMessage());
                 }

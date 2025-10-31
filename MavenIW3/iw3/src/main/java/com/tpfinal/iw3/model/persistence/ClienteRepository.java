@@ -21,4 +21,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>{
     //y IgnoreCase para que no importe mayusculas o minusculas
     List<Cliente> findByRazonSocialContainingIgnoreCase(String razonSocial);
 
+    // Búsqueda exacta por razón social (ignorando mayúsculas/minúsculas)
+    Optional<Cliente> findOneByRazonSocialIgnoreCase(String razonSocial);
+
 }

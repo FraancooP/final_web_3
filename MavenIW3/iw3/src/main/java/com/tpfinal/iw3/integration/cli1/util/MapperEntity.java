@@ -64,8 +64,24 @@ public class MapperEntity {
             return productoBaseBusiness.load(productoCli1Existente.getId());
         }
 
-        // Buscar producto base por nombre - SI NO EXISTE, FALLA (patrón ProyectoAyuda)
-        Producto productoBase = productoBaseBusiness.load(productoCli1.getNombre());
+        // Buscar producto base por nombre. Si NO existe, lo creamos automáticamente.
+        Producto productoBase;
+        try {
+            productoBase = productoBaseBusiness.load(productoCli1.getNombre());
+        } catch (NotFoundException nf) {
+            // Auto-crear producto base con datos mínimos
+            Producto nuevo = new Producto();
+            nuevo.setNombre(productoCli1.getNombre());
+            nuevo.setDescripcion(productoCli1.getDescripcion());
+            // Usamos un código externo consistente con otras entidades externas
+            nuevo.setCodigoExterno("CLI1-" + productoCli1.getIdCli1());
+            try {
+                productoBase = productoBaseBusiness.add(nuevo);
+            } catch (Exception e) {
+                log.error("Error al crear producto base desde CLI1", e);
+                throw new BusinessException("Error al crear producto base desde CLI1");
+            }
+        }
 
         try {
             productoCli1.setId(productoBase.getId());
