@@ -69,6 +69,25 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<!-- Perfiles de ejecución on start -->
+		<profile>
+			<id>mysqldev</id>
+			<properties>
+				<spring.profiles.active>mysqldev</spring.profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>mysqlprod</id>
+			<properties>
+				<spring.profiles.active>mysqlprod</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>

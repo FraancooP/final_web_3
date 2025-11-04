@@ -131,7 +131,7 @@ public class Orden {
     @Column(name = "codigo_externo", length = 50, unique=true, nullable = true)
     private String codigoExterno;
 
-    @Column(name = "contra_activacion")
+    @Column(name = "contra_activacion", nullable = true, unique = true)
     private Integer contraActivacion;
 
 }

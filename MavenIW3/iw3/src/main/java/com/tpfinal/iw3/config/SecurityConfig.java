@@ -25,8 +25,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         
         http.authorizeHttpRequests(auth -> auth
-                // Permitir acceso público al endpoint CLI1 (integración externa)
+                // Permitir acceso público al endpoint CLI1 (integración externa - recepción órdenes)
                 .requestMatchers(HttpMethod.POST, "/api/v1/integration/cli1/**").permitAll()
+                
+                // Permitir acceso público al endpoint CLI2 (integración externa - balanza/pesaje)
+                .requestMatchers(HttpMethod.POST, "/api/v1/integration/cli2/**").permitAll()
                 
                 // Permitir acceso a Swagger (documentación)
                 .requestMatchers("/v3/api-docs/**").permitAll()
