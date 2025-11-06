@@ -1,5 +1,6 @@
 package com.tpfinal.iw3.model.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,8 @@ public interface OrdenRepository extends JpaRepository<Orden, Long> {
 
     Optional<Orden> findByContraActivacion(Integer contraActivacion);
 
-    // Busca una orden por patente del camión y estado específico
+    // Busca órdenes por patente del camión y estado específico, ordenadas por fecha de recepción
+    // Retorna lista ordenada por fecha de recepción (FIFO: la más antigua primero)
     // Usado en CLI2 para encontrar la orden PENDIENTE_PESAJE_INICIAL por patente
-    Optional<Orden> findByCamion_PatenteAndEstado(String patente, EstadoOrden estado);
+    List<Orden> findByCamion_PatenteAndEstadoOrderByFechaRecepcionInicialAsc(String patente, EstadoOrden estado);
 }

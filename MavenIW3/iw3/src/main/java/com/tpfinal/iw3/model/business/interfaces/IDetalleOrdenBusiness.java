@@ -15,4 +15,21 @@ public interface IDetalleOrdenBusiness {
 
     DetalleOrden add(DetalleOrden detail) throws DuplicateException, BusinessException;
 
+    /**
+     * Calcula el promedio de temperatura de los detalles de una orden.
+     * Usado para la conciliación (Punto 5).
+     */
+    Float calculateAverageTemperature(Long orderId);
+
+    /**
+     * Calcula el promedio de densidad de los detalles de una orden.
+     * Usado para la conciliación (Punto 5).
+     */
+    Float calculateAverageDensity(Long orderId);
+
+    /**
+     * Calcula el promedio de caudal de los detalles de una orden.
+     * Usado para la conciliación (Punto 5).
+     */
+    Float calculateAverageFlowRate(Long orderId);
 }

@@ -45,6 +45,9 @@ public class Orden {
     @Column(name = "tara_camion")
     private Double tara;
 
+    @Column(name = "pesaje_final")
+    private Double pesajeFinal;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private EstadoOrden estado = EstadoOrden.PENDIENTE_PESAJE_INICIAL;
@@ -131,7 +134,7 @@ public class Orden {
     @Column(name = "codigo_externo", length = 50, unique=true, nullable = true)
     private String codigoExterno;
 
-    @Column(name = "contra_activacion", nullable = true, unique = true)
+    @Column(name = "contra_activacion", nullable = true)
     private Integer contraActivacion;
 
 }

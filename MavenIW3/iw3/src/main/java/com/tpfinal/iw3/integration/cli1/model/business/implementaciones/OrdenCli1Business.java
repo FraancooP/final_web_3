@@ -79,6 +79,16 @@ public class OrdenCli1Business implements IOrdenCli1Business {
         }
 
         try {
+            // IMPORTANTE: Convertir numeroOrdenCli1 (String) a numeroOrden (Integer) de la clase padre
+            // para evitar violación de constraint única
+            try {
+                Integer numeroOrden = Integer.parseInt(orden.getNumeroOrdenCli1());
+                orden.setNumeroOrden(numeroOrden);
+            } catch (NumberFormatException e) {
+                // Si numeroOrdenCli1 no es numérico, usar hashCode como alternativa
+                orden.setNumeroOrden(orden.getNumeroOrdenCli1().hashCode());
+            }
+            
             return ordenCli1DAO.save(orden);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

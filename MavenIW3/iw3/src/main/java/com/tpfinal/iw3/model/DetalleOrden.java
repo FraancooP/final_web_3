@@ -46,7 +46,7 @@ public class DetalleOrden {
     private float caudal;
 
     @Column(name = "estampa_tiempo", nullable = false)
-    private float estampaTiempo;
+    private Long estampaTiempo;  // Timestamp Unix en milisegundos
 
 
 
