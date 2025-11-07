@@ -70,20 +70,20 @@ public interface IOrdenCli3Business {
      * ha finalizado (masa acumulada >= preset, o señal manual de fin).
      * 
      * Validaciones:
-     * - La orden debe existir
-     * - Estado debe ser CERRADA_PARA_CARGAR
+     * - La contraseña debe existir en la BD
+     * - Estado debe ser CON_PESAJE_INICIAL (durante la carga)
      * 
      * Acciones:
-     * - Cambia estado a FINALIZADA
+     * - Cambia estado a CERRADA_PARA_CARGAR
      * - Registra fechaFinCarga
      * - Limpia contraActivacion = null (seguridad, evita reutilización)
      * 
-     * @param ordenId ID de la orden a cerrar
+     * @param password Contraseña de 5 dígitos (misma que se usó para validar)
      * @return Orden cerrada
-     * @throws NotFoundException Si no se encuentra la orden
+     * @throws NotFoundException Si no se encuentra la orden con esa password
      * @throws BusinessException Si hay errores de persistencia
-     * @throws ConflictException Si el estado no es CERRADA_PARA_CARGAR
+     * @throws ConflictException Si el estado no es CON_PESAJE_INICIAL
      */
-    Orden closeOrder(Long ordenId) 
+    Orden closeOrder(Integer password) 
             throws BusinessException, NotFoundException, ConflictException;
 }

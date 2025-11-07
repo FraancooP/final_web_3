@@ -146,19 +146,20 @@ public class OrdenCli3RestController {
      * PUNTO 3.3: Cerrar orden y finalizar proceso de carga.
      * 
      * El dispositivo CLI3 detecta que la carga finalizó (masa acumulada >= preset
-     * o señal manual) y envía la petición de cierre.
+     * o señal manual) y envía la petición de cierre usando la misma password
+     * que se usó para validar y habilitar la carga.
      * 
-     * Request Header: OrderId (Long) - ID de la orden
+     * Request Header: Password (Integer) - Contraseña de 5 dígitos (misma que en validate)
      * Response 200: Header Order-Id con ID de orden cerrada
-     * Response 404: Orden no encontrada
+     * Response 404: Orden no encontrada o password inválida
      * Response 409: Estado inválido
      */
     @PostMapping("/close")
-    public ResponseEntity<?> closeOrder(@RequestHeader("OrderId") Long orderId) {
+    public ResponseEntity<?> closeOrder(@RequestHeader("Password") Integer password) {
         try {
-            log.info("CLI3 REST: Cerrando orden: ordenId={}", orderId);
+            log.info("CLI3 REST: Cerrando orden con contraseña: {}", password);
             
-            Orden orden = ordenCli3Business.closeOrder(orderId);
+            Orden orden = ordenCli3Business.closeOrder(password);
             
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set("Order-Id", String.valueOf(orden.getId()));

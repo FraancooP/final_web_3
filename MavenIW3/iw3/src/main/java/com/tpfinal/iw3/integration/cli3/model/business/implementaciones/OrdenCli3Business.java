@@ -22,15 +22,22 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Implementación de la lógica de negocio para CLI3 (Sistema de Control de Carga).
  * 
- * FLUJO DEL PUNTO 3:
+ * FLUJO DEL PUNTO 3 (según consigna):
  * 1. Chofer ingresa contraseña de 5 dígitos en dispositivo CLI3
- * 2. Sistema valida contraseña y activa carga (estado: CERRADA_PARA_CARGAR)
+ * 2. Sistema valida contraseña (estado se MANTIENE en CON_PESAJE_INICIAL)
  * 3. Dispositivo CLI3 envía datos periódicos de carga (masa, densidad, temp, caudal)
  * 4. Sistema almacena TODOS los detalles conforme se reciben
- * 5. Al finalizar, dispositivo CLI3 cierra orden (estado: CERRADA_PARA_CARGAR)
+ * 5. Al finalizar, dispositivo CLI3 cierra orden (estado cambia a CERRADA_PARA_CARGAR)
+ * 
+ * ESTADOS:
+ * - Antes de validar password: CON_PESAJE_INICIAL
+ * - Después de validar password: CON_PESAJE_INICIAL (NO cambia)
+ * - Durante la carga (envío detalles): CON_PESAJE_INICIAL
+ * - Después de cerrar orden: CERRADA_PARA_CARGAR
+ * - Después de pesaje final (Punto 5): FINALIZADA
  * 
  * IMPORTANTE: La orden NO pasa a FINALIZADA en CLI3.closeOrder().
- * El estado FINALIZADA se alcanza en el Punto 5 (pesaje final).
+ * El estado FINALIZADA se alcanza en el Punto 5 (pesaje final - CLI2).
  * 
  * NOTA: Por el momento se almacenan TODOS los registros que llegan.
  * La configuración de frecuencia de almacenamiento es opcional y se implementará después.
@@ -46,14 +53,17 @@ public class OrdenCli3Business implements IOrdenCli3Business {
     private DetalleOrdenRepository detalleOrdenRepository;
 
     /**
-     * PUNTO 3.1: Valida contraseña y activa la carga.
+     * PUNTO 3.1: Valida contraseña y habilita la carga.
      * 
      * Flujo:
      * 1. Buscar orden por contraseña
      * 2. Validar estado = CON_PESAJE_INICIAL
-     * 3. Cambiar estado a CERRADA_PARA_CARGAR
+     * 3. NO cambia el estado (se mantiene en CON_PESAJE_INICIAL)
      * 4. Registrar fechaInicioCarga
-     * 5. Retornar datos para dispositivo CLI3
+     * 5. Retornar datos para dispositivo CLI3 (id, password, preset)
+     * 
+     * IMPORTANTE: El estado NO cambia aquí. 
+     * Se mantiene en CON_PESAJE_INICIAL hasta que se cierre la orden.
      */
     @Override
     @Transactional
@@ -88,14 +98,16 @@ public class OrdenCli3Business implements IOrdenCli3Business {
             );
         }
 
-        // 3. Cambiar estado a CERRADA_PARA_CARGAR
-        orden.setEstado(EstadoOrden.CERRADA_PARA_CARGAR);
+        // 3. NO cambiar estado - se mantiene en CON_PESAJE_INICIAL
+        // El cambio a CERRADA_PARA_CARGAR ocurre en closeOrder()
+        
+        // 4. Registrar inicio de carga
         orden.setFechaInicioCarga(LocalDateTime.now());
 
-        // 4. Persistir cambios
+        // 5. Persistir cambios
         try {
             orden = ordenRepository.save(orden);
-            log.info("CLI3: Carga activada exitosamente para orden={}, estado={}", 
+            log.info("CLI3: Contraseña validada exitosamente. Carga habilitada para orden={}, estado={}", 
                      orden.getId(), orden.getEstado());
         } catch (Exception e) {
             log.error("CLI3: Error al activar carga: {}", e.getMessage(), e);
@@ -110,7 +122,7 @@ public class OrdenCli3Business implements IOrdenCli3Business {
      * 
      * Flujo:
      * 1. Buscar orden por ID
-     * 2. Validar estado = CERRADA_PARA_CARGAR
+     * 2. Validar estado = CON_PESAJE_INICIAL (durante la carga activa)
      * 3. Validar datos entrantes (masa creciente, caudal positivo)
      * 4. Guardar detalle en BD (TODOS los registros que llegan)
      * 5. Actualizar últimos valores en cabecera
@@ -146,11 +158,11 @@ public class OrdenCli3Business implements IOrdenCli3Business {
 
         Orden orden = ordenOpt.get();
 
-        // 2. Validar estado
-        if (orden.getEstado() != EstadoOrden.CERRADA_PARA_CARGAR) {
-            log.error("CLI3: Estado inválido. Esperado=CERRADA_PARA_CARGAR, Actual={}", orden.getEstado());
+        // 2. Validar estado - debe estar en CON_PESAJE_INICIAL (carga activa)
+        if (orden.getEstado() != EstadoOrden.CON_PESAJE_INICIAL) {
+            log.error("CLI3: Estado inválido. Esperado=CON_PESAJE_INICIAL, Actual={}", orden.getEstado());
             throw new ConflictException(
-                "Estado de orden inválido. Esperado: CERRADA_PARA_CARGAR, Actual: " + orden.getEstado()
+                "Estado de orden inválido. Esperado: CON_PESAJE_INICIAL, Actual: " + orden.getEstado()
             );
         }
 
@@ -220,54 +232,53 @@ public class OrdenCli3Business implements IOrdenCli3Business {
      * PUNTO 3.3: Cierra la orden y bloquea recepción de nuevos datos.
      * 
      * Flujo:
-     * 1. Buscar orden por ID
-     * 2. Validar estado = CERRADA_PARA_CARGAR
-     * 3. Mantener estado CERRADA_PARA_CARGAR (NO cambia a FINALIZADA aquí)
-     * 4. Registrar fechaFinCarga si aún no está seteada
+     * 1. Buscar orden por CONTRASEÑA (misma que validó y habilitó la carga)
+     * 2. Validar estado = CON_PESAJE_INICIAL (durante la carga)
+     * 3. Cambiar estado a CERRADA_PARA_CARGAR
+     * 4. Registrar fechaFinCarga
      * 5. Limpiar contraseña (seguridad)
      * 
-     * IMPORTANTE: La orden NO pasa a FINALIZADA aquí.
+     * IMPORTANTE: Aquí SÍ cambia el estado a CERRADA_PARA_CARGAR.
      * El cambio a FINALIZADA ocurre en el Punto 5 (pesaje final).
      */
     @Override
     @Transactional
-    public Orden closeOrder(Long ordenId) 
+    public Orden closeOrder(Integer password) 
             throws BusinessException, NotFoundException, ConflictException {
         
-        log.info("CLI3: Cerrando recepción de datos para orden: ordenId={}", ordenId);
+        log.info("CLI3: Cerrando recepción de datos con contraseña: {}", password);
 
-        // 1. Buscar orden
+        // 1. Buscar orden por contraseña
         Optional<Orden> ordenOpt;
         try {
-            ordenOpt = ordenRepository.findById(ordenId);
+            ordenOpt = ordenRepository.findByContraActivacion(password);
         } catch (Exception e) {
-            log.error("CLI3: Error al buscar orden id={}: {}", ordenId, e.getMessage(), e);
+            log.error("CLI3: Error al buscar orden con password={}: {}", password, e.getMessage(), e);
             throw new BusinessException("Error al recuperar orden", e);
         }
 
         if (ordenOpt.isEmpty()) {
-            log.error("CLI3: No se encontró orden con id={}", ordenId);
-            throw new NotFoundException("Orden no encontrada con id: " + ordenId);
+            log.error("CLI3: No se encontró orden con contraseña: {}", password);
+            throw new NotFoundException("Orden no encontrada con la contraseña especificada");
         }
 
         Orden orden = ordenOpt.get();
 
-        // 2. Validar estado
-        if (orden.getEstado() != EstadoOrden.CERRADA_PARA_CARGAR) {
-            log.error("CLI3: Estado inválido para cerrar. Esperado=CERRADA_PARA_CARGAR, Actual={}", 
+        // 2. Validar estado - debe estar en CON_PESAJE_INICIAL (carga activa)
+        if (orden.getEstado() != EstadoOrden.CON_PESAJE_INICIAL) {
+            log.error("CLI3: Estado inválido para cerrar. Esperado=CON_PESAJE_INICIAL, Actual={}", 
                      orden.getEstado());
             throw new ConflictException(
-                "Estado de orden inválido para cerrar. Esperado: CERRADA_PARA_CARGAR, Actual: " + orden.getEstado()
+                "Estado de orden inválido para cerrar. Esperado: CON_PESAJE_INICIAL, Actual: " + orden.getEstado()
             );
         }
 
-        // 3. Mantener estado CERRADA_PARA_CARGAR (no cambia a FINALIZADA)
-        // El estado FINALIZADA se setea en el Punto 5 (pesaje final)
+        // 3. Cambiar estado a CERRADA_PARA_CARGAR
+        orden.setEstado(EstadoOrden.CERRADA_PARA_CARGAR);
+        log.info("CLI3: Cambiando estado de orden={} a CERRADA_PARA_CARGAR", orden.getId());
         
-        // 4. Asegurar que fechaFinCarga esté registrada
-        if (orden.getFechaFinCarga() == null) {
-            orden.setFechaFinCarga(LocalDateTime.now());
-        }
+        // 4. Registrar fechaFinCarga
+        orden.setFechaFinCarga(LocalDateTime.now());
         
         // 5. Limpiar contraseña por seguridad (evitar reutilización)
         orden.setContraActivacion(null);
@@ -275,7 +286,7 @@ public class OrdenCli3Business implements IOrdenCli3Business {
         // 6. Persistir cambios
         try {
             orden = ordenRepository.save(orden);
-            log.info("CLI3: Recepción de datos cerrada: ordenId={}, numeroOrden={}, estado={}", 
+            log.info("CLI3: Orden cerrada exitosamente: ordenId={}, numeroOrden={}, estado={}", 
                      orden.getId(), orden.getNumeroOrden(), orden.getEstado());
         } catch (Exception e) {
             log.error("CLI3: Error al cerrar orden: {}", e.getMessage(), e);

@@ -3,6 +3,7 @@ package com.tpfinal.iw3.model.business.implementaciones;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tpfinal.iw3.model.DetalleOrden;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DetalleOrdenBusiness implements IDetalleOrdenBusiness{
 
+    @Autowired
     private DetalleOrdenRepository detalleOrdenDAO;
 
     @Override
@@ -70,20 +72,22 @@ public class DetalleOrdenBusiness implements IDetalleOrdenBusiness{
         return detailsFound.get();
     }
 
+    @Override
     public Float calculateAverageTemperature(Long orderId) {
         Double avgTemp = detalleOrdenDAO.findAverageTemperatureByOrderId(orderId);
         return avgTemp != null ? avgTemp.floatValue() : 0.0f;
     }
 
+    @Override
     public Float calculateAverageDensity(Long orderId) {
         Double avgDensity = detalleOrdenDAO.findAverageDensityByOrderId(orderId);
         return avgDensity != null ? avgDensity.floatValue() : 0.0f;
     }
 
+    @Override
     public Float calculateAverageFlowRate(Long orderId) {
         var avgFlow = detalleOrdenDAO.findAverageFlowRateByOrderId(orderId);
         return avgFlow != null ? avgFlow.floatValue() : 0.0f;
     }
-
 
 }
