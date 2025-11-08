@@ -51,48 +51,66 @@ public class MapperEntity {
 
 
 
-    //Mapeamos ProductoCli1 con Producto Base
-
+    /**
+     * Mapea ProductoCli1 con Producto Base.
+     * 
+     * IMPORTANTE: El producto DEBE existir previamente en la BD.
+     * No se crean productos automáticamente para mantener control sobre el catálogo.
+     * 
+     * Flujo:
+     * 1. Verificar si ya existe el mapeo CLI1 → Producto
+     * 2. Si existe, retornar el producto mapeado
+     * 3. Si NO existe mapeo, buscar producto base por nombre
+     * 4. Si el producto NO existe → LANZA NotFoundException (rechaza la orden)
+     * 5. Si existe, crear el mapeo y retornar
+     * 
+     * @throws NotFoundException Si el producto no existe en la BD
+     * @throws BusinessException Si hay error en el mapeo
+     */
     @Transactional
     public Producto map(ProductoCli1 productoCli1) throws BusinessException, NotFoundException {
 
-        //Verificamos si ya esta mapeado
+        // 1. Verificar si ya está mapeado
         Optional<ProductoCli1> productoExistente = productoCli1DAO.findOneByIdCli1(productoCli1.getIdCli1());
         if (productoExistente.isPresent()) {
             // Si ya existe el mapeo, retornar el producto base asociado
             ProductoCli1 productoCli1Existente = productoExistente.get();
+            log.debug("Producto CLI1 ya mapeado: idCli1={}, productoId={}", 
+                     productoCli1.getIdCli1(), productoCli1Existente.getId());
             return productoBaseBusiness.load(productoCli1Existente.getId());
         }
 
-        // Buscar producto base por nombre. Si NO existe, lo creamos automáticamente.
+        // 2. Buscar producto base por nombre - DEBE EXISTIR
         Producto productoBase;
         try {
             productoBase = productoBaseBusiness.load(productoCli1.getNombre());
+            log.info("Producto base encontrado: nombre='{}', id={}", 
+                    productoBase.getNombre(), productoBase.getId());
         } catch (NotFoundException nf) {
-            // Auto-crear producto base con datos mínimos
-            Producto nuevo = new Producto();
-            nuevo.setNombre(productoCli1.getNombre());
-            nuevo.setDescripcion(productoCli1.getDescripcion());
-            // Usamos un código externo consistente con otras entidades externas
-            nuevo.setCodigoExterno("CLI1-" + productoCli1.getIdCli1());
-            try {
-                productoBase = productoBaseBusiness.add(nuevo);
-            } catch (Exception e) {
-                log.error("Error al crear producto base desde CLI1", e);
-                throw new BusinessException("Error al crear producto base desde CLI1");
-            }
+            // NO auto-crear: el producto debe existir previamente en la BD
+            log.error("Producto NO encontrado en BD: nombre='{}', idCli1='{}'", 
+                     productoCli1.getNombre(), productoCli1.getIdCli1());
+            throw new NotFoundException(
+                "El producto '" + productoCli1.getNombre() + "' no existe en el sistema. " +
+                "Por favor, cree el producto antes de enviar órdenes con este producto."
+            );
         }
 
+        // 3. Crear el mapeo CLI1 → Producto
         try {
             productoCli1.setId(productoBase.getId());
             productoCli1.setNombre(productoBase.getNombre());
             productoCli1.setDescripcion(productoBase.getDescripcion());
             productoCli1.setCodigoExterno(productoBase.getCodigoExterno());
             productoCli1DAO.insertProductoCli1(productoBase.getId(), productoCli1.getIdCli1());
+            
+            log.info("Mapeo creado exitosamente: ProductoCli1 idCli1='{}' → Producto id={}", 
+                    productoCli1.getIdCli1(), productoBase.getId());
+            
             return productoBase;
         } catch (Exception e) {
-            log.error("Error al mapear producto CLI1", e);
-            throw new BusinessException("Error al mapear producto CLI1");
+            log.error("Error al mapear producto CLI1: {}", e.getMessage(), e);
+            throw new BusinessException("Error al crear mapeo de producto CLI1");
         }
     }
 

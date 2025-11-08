@@ -27,3 +27,8 @@ Para ejecutar el servidor:
 mvn spring-boot:run
 o
 java -jar target/iw3-0.0.1-SNAPSHOT.jar
+
+PARA WINDOWS:
+.\mvnw.cmd clean package
+
+.\mvnw.cmd spring-boot:run
