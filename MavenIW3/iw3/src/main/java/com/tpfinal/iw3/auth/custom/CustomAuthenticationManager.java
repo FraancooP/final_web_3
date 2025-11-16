@@ -60,7 +60,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			throw new LockedException(User.VALIDATION_LOCKED);
 		if (!pEncoder.matches(password, user.getPassword()))
 			throw new BadCredentialsException("Invalid password");
-		return new UsernamePasswordAuthenticationToken(user, null,user.getAuthorities());
+		// Retornar autenticación sin authorities (sin roles)
+		return new UsernamePasswordAuthenticationToken(user, null, null);
 
 		
 	}

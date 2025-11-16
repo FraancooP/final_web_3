@@ -35,13 +35,4 @@ public class ConciliacionException extends Exception{
 	public ConciliacionException(Throwable ex) {
 		super(ex);
 	}
-
-
-
-
-
-
-
-
-
 }

@@ -16,8 +16,7 @@ import com.tpfinal.iw3.model.business.excepciones.BusinessException;
 import com.tpfinal.iw3.model.business.excepciones.ConciliacionException;
 import com.tpfinal.iw3.model.business.excepciones.ConflictException;
 import com.tpfinal.iw3.model.business.excepciones.NotFoundException;
-import com.tpfinal.iw3.model.business.interfaces.IDetalleOrdenBusiness;
-import com.tpfinal.iw3.model.persistence.DetalleOrdenRepository;
+import com.tpfinal.iw3.model.business.interfaces.IOrdenBusiness;
 import com.tpfinal.iw3.model.persistence.OrdenRepository;
 import com.tpfinal.iw3.util.ActivationPasswordGenerator;
 
@@ -43,10 +42,7 @@ public class OrdenCli2Business implements IOrdenCli2Business {
     private OrdenRepository ordenRepository;
 
     @Autowired
-    private DetalleOrdenRepository detalleOrdenRepository;
-
-    @Autowired
-    private IDetalleOrdenBusiness detalleOrdenBusiness;
+    private IOrdenBusiness ordenBusiness;
 
     /**
      * PUNTO 2: Registra el pesaje inicial (tara) del camión.
@@ -202,113 +198,20 @@ public class OrdenCli2Business implements IOrdenCli2Business {
             throw new BusinessException("Error al registrar pesaje final: " + e.getMessage());
         }
 
-        // 6. Generar conciliación
-        return calculateReconciliation(orden);
+        // 6. Generar conciliación (delegando en OrdenBusiness)
+        return ordenBusiness.getReconciliation(orden.getId());
     }
 
     /**
      * PUNTO 5: Obtiene la conciliación de una orden finalizada.
+     * Delega en OrdenBusiness (lógica centralizada).
      */
     @Override
     @Transactional(readOnly = true)
     public Conciliacion getReconciliation(Long ordenId) 
             throws NotFoundException, ConflictException, ConciliacionException, BusinessException {
         
-        log.info("CLI2: Consultando conciliación para ordenId={}", ordenId);
-
-        // 1. Buscar orden
-        Optional<Orden> ordenOpt;
-        try {
-            ordenOpt = ordenRepository.findById(ordenId);
-        } catch (Exception e) {
-            log.error("CLI2: Error al buscar orden id={}: {}", ordenId, e.getMessage(), e);
-            throw new BusinessException("Error al recuperar orden", e);
-        }
-
-        if (ordenOpt.isEmpty()) {
-            log.error("CLI2: No se encontró orden con id={}", ordenId);
-            throw new NotFoundException("Orden no encontrada con id: " + ordenId);
-        }
-
-        Orden orden = ordenOpt.get();
-
-        // 2. Validar estado FINALIZADA
-        if (orden.getEstado() != EstadoOrden.FINALIZADA) {
-            log.error("CLI2: La orden {} no está finalizada. Estado actual: {}", 
-                     orden.getNumeroOrden(), orden.getEstado());
-            throw new ConflictException(
-                "La conciliación solo está disponible para órdenes FINALIZADAS. Estado actual: " + orden.getEstado()
-            );
-        }
-
-        // 3. Calcular conciliación
-        return calculateReconciliation(orden);
-    }
-
-    /**
-     * Calcula la conciliación para una orden.
-     * Requiere: pesajeInicial, pesajeFinal, ultimaMasaAcomulada.
-     */
-    private Conciliacion calculateReconciliation(Orden orden) 
-            throws ConciliacionException, BusinessException {
-        
-        log.debug("CLI2: Calculando conciliación para orden={}", orden.getId());
-
-        // Validar datos requeridos
-        if (orden.getTara() == null) {
-            throw new ConciliacionException("Falta pesaje inicial (tara)");
-        }
-        if (orden.getPesajeFinal() == null) {
-            throw new ConciliacionException("Falta pesaje final");
-        }
-        if (orden.getUltimaMasaAcomulada() == null) {
-            throw new ConciliacionException("No hay masa acumulada registrada");
-        }
-
-        // Calcular neto por balanza
-        Double netoPorBalanza = orden.getPesajeFinal() - orden.getTara();
-        
-        // Calcular diferencia
-        Double diferencia = netoPorBalanza - orden.getUltimaMasaAcomulada();
-        
-        // Calcular porcentaje de diferencia
-        Double porcentajeDiferencia = 0.0;
-        if (orden.getUltimaMasaAcomulada() > 0) {
-            porcentajeDiferencia = (diferencia / orden.getUltimaMasaAcomulada()) * 100.0;
-        }
-
-        // Calcular promedios de los detalles almacenados
-        Float promedioTemperatura = detalleOrdenBusiness.calculateAverageTemperature(orden.getId());
-        Float promedioDensidad = detalleOrdenBusiness.calculateAverageDensity(orden.getId());
-        Float promedioCaudal = detalleOrdenBusiness.calculateAverageFlowRate(orden.getId());
-
-        // Contar cantidad de detalles
-        Optional<List<com.tpfinal.iw3.model.DetalleOrden>> detallesOpt = 
-            detalleOrdenRepository.findByOrdenId(orden.getId());
-        int cantidadDetalles = detallesOpt.isPresent() ? detallesOpt.get().size() : 0;
-
-        // Construir objeto de conciliación
-        Conciliacion conciliacion = Conciliacion.builder()
-            .ordenId(orden.getId())
-            .numeroOrden(orden.getNumeroOrden())
-            .pesajeInicial(orden.getTara())
-            .pesajeFinal(orden.getPesajeFinal())
-            .productoCargado(orden.getUltimaMasaAcomulada())
-            .netoPorBalanza(netoPorBalanza)
-            .diferencia(diferencia)
-            .porcentajeDiferencia(porcentajeDiferencia)
-            .promedioTemperatura(promedioTemperatura)
-            .promedioDensidad(promedioDensidad)
-            .promedioCaudal(promedioCaudal)
-            .presetKg(orden.getPresetKg())
-            .estadoOrden(orden.getEstado().name())
-            .cantidadDetalles(cantidadDetalles)
-            .build();
-
-        log.info("CLI2: Conciliación calculada - Orden={}, Neto balanza={} kg, Producto cargado={} kg, Diferencia={} kg ({} %)", 
-                 orden.getNumeroOrden(), netoPorBalanza, orden.getUltimaMasaAcomulada(), 
-                 diferencia, String.format("%.2f", porcentajeDiferencia));
-
-        return conciliacion;
+        log.info("CLI2: Consultando conciliación para ordenId={} (delegando a OrdenBusiness)", ordenId);
+        return ordenBusiness.getReconciliation(ordenId);
     }
 }
