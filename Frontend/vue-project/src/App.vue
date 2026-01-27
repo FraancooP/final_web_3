@@ -1,11 +1,19 @@
-<script setup></script>
+<script setup>
+import Login from './views/Login.vue'
+</script>
 
 <template>
-  <h1>FUNCIONA CAPO</h1>
-  <p>
-    Visit <a href="https://videosdegatitos.org/" target="_blank" rel="noopener">videosdegatitos.org</a> to read the
-    documentation
-  </p>
+  <Login />
 </template>
 
-<style scoped></style>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+</style>
