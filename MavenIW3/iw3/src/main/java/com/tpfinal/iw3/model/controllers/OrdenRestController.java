@@ -43,6 +43,64 @@ public class OrdenRestController {
     private IOrdenBusiness ordenBusiness;
 
     /**
+     * Obtiene la lista completa de órdenes del sistema.
+     * 
+     * @return ResponseEntity con la lista de órdenes o error
+     * 
+     * Ejemplo de uso:
+     * GET /api/v1/ordenes
+     * 
+     * Respuesta exitosa (200 OK):
+     * [
+     *   {
+     *     "id": 1,
+     *     "numeroOrden": 12345,
+     *     "estado": "EN_CARGA",
+     *     "preset": 30000.0,
+     *     "masaAcumulada": 15000.0,
+     *     ...
+     *   }
+     * ]
+     */
+    @Operation(
+        summary = "Listar todas las órdenes",
+        description = "Retorna la lista completa de órdenes del sistema"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Lista de órdenes obtenida exitosamente"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(mediaType = "text/plain")
+        )
+    })
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> listarOrdenes() {
+        log.info("REST Orden: Listando todas las órdenes");
+        
+        try {
+            var ordenes = ordenBusiness.list();
+            log.info("REST Orden: Se encontraron {} órdenes", ordenes.size());
+            return ResponseEntity.ok(ordenes);
+            
+        } catch (BusinessException e) {
+            log.error("REST Orden: Error al listar órdenes - {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al listar órdenes: " + e.getMessage());
+                
+        } catch (Exception e) {
+            log.error("REST Orden: Error inesperado al listar órdenes", e);
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error inesperado: " + e.getMessage());
+        }
+    }
+
+    /**
      * Obtiene la conciliación de una orden finalizada.
      * 
      * La conciliación incluye:

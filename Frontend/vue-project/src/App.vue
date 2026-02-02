@@ -1,9 +1,9 @@
 <script setup>
-import Login from './views/Login.vue'
+// El router ya maneja las vistas
 </script>
 
 <template>
-  <Login />
+  <router-view />
 </template>
 
 <style>

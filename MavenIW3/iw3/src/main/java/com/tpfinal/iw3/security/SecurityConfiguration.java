@@ -63,6 +63,7 @@ public class SecurityConfiguration {
 
 		// CORS: https://developer.mozilla.org/es/docs/Web/HTTP/CORS
 		// CSRF: https://developer.mozilla.org/es/docs/Glossary/CSRF
+		http.cors(cors -> {}); // Habilitar CORS usando la configuración del bean corsConfigurer
 		http.csrf(AbstractHttpConfigurer::disable);
 		http.authorizeHttpRequests(auth -> auth
 				// Endpoints públicos (sin autenticación)

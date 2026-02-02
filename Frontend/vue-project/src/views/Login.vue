@@ -28,7 +28,7 @@
             id="username"
             v-model="username"
             type="text"
-            placeholder="Ingresa tu usuario o correo electronico"
+            placeholder="admin"
             class="form-input"
           />
         </div>
@@ -39,7 +39,7 @@
             id="password"
             v-model="password"
             type="password"
-            placeholder="Ingresa tu contraseña"
+            placeholder="admin"
             class="form-input"
           />
           <a href="#" class="forgot-password" @click.prevent="handleForgotPassword">
@@ -51,8 +51,8 @@
           {{ error }}
         </div>
 
-        <button type="submit" class="submit-btn">
-          <span>Iniciar Sesión</span>
+        <button type="submit" class="submit-btn" :disabled="loading">
+          <span>{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</span>
           <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M12 5l7 7-7 7"></path>
           </svg>
@@ -64,12 +64,16 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import authService from '@/services/authService';
 
+const router = useRouter();
 const username = ref('');
 const password = ref('');
 const error = ref('');
+const loading = ref(false);
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   error.value = '';
 
   if (!username.value || !password.value) {
@@ -77,18 +81,45 @@ const handleSubmit = () => {
     return;
   }
 
-  // Validación simple para demo
-  if (username.value === 'admin' && password.value === 'admin123') {
-    alert('¡Login exitoso! Bienvenido a Tankers');
-    // Aquí puedes agregar la navegación al dashboard
-  } else {
-    error.value = 'Usuario o contraseña incorrectos';
+  loading.value = true;
+
+  try {
+    console.log('🔐 Intentando login con:', { username: username.value, url: 'http://localhost:8081/api/v1/auth/login' });
+    await authService.login(username.value, password.value);
+    console.log('✅ Login exitoso! Redirigiendo al dashboard...');
+    // Redirigir al dashboard después del login exitoso
+    router.push({ path: '/dashboard' });
+  } catch (err) {
+    console.error('❌ Error al iniciar sesión:', err);
+    console.error('Error completo:', { 
+      response: err.response, 
+      request: err.request, 
+      message: err.message,
+      config: err.config 
+    });
+    
+    if (err.response) {
+      // El servidor respondió con un error
+      if (err.response.status === 401) {
+        error.value = 'Usuario o contraseña incorrectos. Intenta con: admin / admin';
+      } else {
+        error.value = `Error del servidor (${err.response.status}): ${err.response.data || err.message}`;
+      }
+    } else if (err.request) {
+      // La petición se hizo pero no hubo respuesta
+      error.value = 'No se puede conectar con el servidor. ¿Está el backend corriendo en http://localhost:8081?';
+      console.error('La petición fue enviada pero no hubo respuesta. Verifica CORS o que el backend esté corriendo.');
+    } else {
+      // Error al configurar la petición
+      error.value = 'Error al enviar la petición: ' + err.message;
+    }
+  } finally {
+    loading.value = false;
   }
 };
 
 const handleForgotPassword = () => {
   alert('Funcionalidad de recuperar contraseña - Próximamente');
-  // Aquí puedes agregar la navegación a la página de recuperación
 };
 </script>
 
